@@ -25,7 +25,7 @@
 @_exported import MediaType
 @_exported import InterchangeData
 
-public enum MediaTypeParserCollectionError: ErrorType {
+public enum MediaTypeParserCollectionError: ErrorProtocol {
     case NoSuitableParser
     case MediaTypeNotFound
 }
@@ -40,7 +40,7 @@ public final class MediaTypeParserCollection {
     public init() {}
 
     public func setPriority(mediaTypes: MediaType...) throws {
-        for mediaType in mediaTypes.reverse() {
+        for mediaType in mediaTypes.reversed() {
             try setTopPriority(mediaType)
         }
     }
@@ -49,8 +49,8 @@ public final class MediaTypeParserCollection {
         for index in 0 ..< parsers.count {
             let tuple = parsers[index]
             if tuple.0 == mediaType {
-                parsers.removeAtIndex(index)
-                parsers.insert(tuple, atIndex: 0)
+                parsers.remove(at: index)
+                parsers.insert(tuple, at: 0)
                 return
             }
         }
@@ -73,7 +73,7 @@ public final class MediaTypeParserCollection {
     }
 
     public func parse(data: Data, mediaType: MediaType) throws -> (MediaType, InterchangeData) {
-        var lastError: ErrorType?
+        var lastError: ErrorProtocol?
 
         for (mediaType, parser) in parsersFor(mediaType) {
             do {
